@@ -1,11 +1,11 @@
 import { useState } from "react";
-import GoodsList from "./GoodsList";
-import Search from "./Search";
+import GoodsList from "./ui/GoodsList";
+import Search from "./common/Search";
 import { goods } from "../data/goods";
-import Header from "./Header";
-import { Container, Snackbar } from "@mui/material";
-import Basket from "./Basket";
-import Snack from "./Snack";
+import Header from "./ui/Header";
+import { Container } from "@mui/material";
+import Basket from "./ui/Basket";
+import Snack from "./common/Snack";
 
 const App = () => {
   const [order, setOrder] = useState([]);
