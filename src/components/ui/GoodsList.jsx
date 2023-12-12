@@ -3,14 +3,14 @@ import React from "react";
 
 import GoodsItem from "./GoodsItem";
 
-const GoodsList = (props) => {
-  const { goods, setOrder } = props;
-
+const GoodsList = ({ goods }) => {
   return (
     <Grid container spacing={2}>
-      {goods.map((item) => (
-        <GoodsItem key={item.id} setOrder={setOrder} {...item} />
-      ))}
+      {goods.length > 0 ? (
+        goods.map((item) => <GoodsItem key={item.id} {...item} />)
+      ) : (
+        <h2>Товары отсутствуют</h2>
+      )}
     </Grid>
   );
 };

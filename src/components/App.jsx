@@ -1,86 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GoodsList from "./ui/GoodsList";
 import Search from "./common/Search";
-import { goods } from "../data/goods";
 import Header from "./ui/Header";
 import { Container } from "@mui/material";
 import Basket from "./ui/Basket";
 import Snack from "./common/Snack";
+import { useGoods } from "../store/store";
 
 const App = () => {
-  const [order, setOrder] = useState([]);
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState(goods);
+  const products = useGoods((state) => state.goods);
   const [isCartOpen, setCartOpen] = useState(false);
-  const [isSnackOpen, setSnackOpen] = useState(false);
+  const loadGoods = useGoods((state) => state.loadGoods);
 
-  const handleChange = (e) => {
-    if (!e.target.value) {
-      setProducts(goods);
-      setSearch("");
-      return;
-    }
+  useEffect(() => {
+    loadGoods();
+  }, []);
 
-    setSearch(e.target.value);
-    setProducts(
-      products.filter((good) =>
-        good.name.toLowerCase().includes(e.target.value.toLowerCase())
+  const filtredProducts = search
+    ? products.filter((good) =>
+        good.name.toLowerCase().includes(search.toLowerCase())
       )
-    );
-  };
-
-  const addToOrder = (goodsItem) => {
-    let quantity = 1;
-
-    const indexInOrder = order.findIndex((item) => item.id === goodsItem.id);
-
-    if (indexInOrder > -1) {
-      quantity = order[indexInOrder].quantity + 1;
-
-      setOrder(
-        order.map((item) => {
-          if (item.id !== goodsItem.id) return item;
-
-          return {
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity,
-          };
-        })
-      );
-    } else {
-      setOrder([
-        ...order,
-        {
-          id: goodsItem.id,
-          name: goodsItem.name,
-          price: goodsItem.price,
-          quantity,
-        },
-      ]);
-    }
-    setSnackOpen(true);
-  };
-
-  const removeFromOrder = (goodsItem) => {
-    setOrder(order.filter((item) => item.id !== goodsItem));
-  };
+    : products;
 
   return (
     <>
-      <Header handleCart={() => setCartOpen(true)} orderLen={order.length} />
+      <Header handleCart={() => setCartOpen(true)} />
       <Container sx={{ mt: "1rem" }}>
-        <Search value={search} onChange={handleChange} />
-        <GoodsList goods={products} setOrder={addToOrder} />
+        <Search
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <GoodsList goods={filtredProducts} />
       </Container>
-      <Basket
-        order={order}
-        cartOpen={isCartOpen}
-        onRemove={removeFromOrder}
-        closeCart={() => setCartOpen(false)}
-      />
-      <Snack isOpen={isSnackOpen} setClose={() => setSnackOpen(false)} />
+      <Basket cartOpen={isCartOpen} closeCart={() => setCartOpen(false)} />
+      <Snack />
     </>
   );
 };

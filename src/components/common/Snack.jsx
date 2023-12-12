@@ -1,9 +1,15 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
+import { useSnake } from "../../store/store";
 
-const Snack = ({ isOpen, setClose }) => {
+const Snack = () => {
+  const { setOpen, open } = useSnake();
   return (
-    <Snackbar open={isOpen} onClose={setClose} autoHideDuration={3000}>
+    <Snackbar
+      open={open}
+      onClose={() => setOpen(false)}
+      autoHideDuration={3000}
+    >
       <Alert severity="success">Товар добавлен в корзину</Alert>
     </Snackbar>
   );

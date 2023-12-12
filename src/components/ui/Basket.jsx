@@ -10,8 +10,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import BasketItem from "./BasketItem";
+import { useGoods } from "../../store/store";
 
-const Basket = ({ order, onRemove, cartOpen, closeCart }) => {
+const Basket = ({ cartOpen, closeCart }) => {
+  const order = useGoods((state) => state.getBasketItems)();
+  const { getQuantity } = useGoods();
+
   return (
     <Drawer anchor="right" open={cartOpen} onClose={closeCart}>
       <List sx={{ width: "400px" }}>
@@ -28,7 +32,7 @@ const Basket = ({ order, onRemove, cartOpen, closeCart }) => {
         ) : (
           <>
             {order.map((item) => (
-              <BasketItem key={item.name} onRemove={onRemove} {...item} />
+              <BasketItem key={item.name} {...item} />
             ))}
             <Divider />
             <ListItem>
@@ -36,7 +40,7 @@ const Basket = ({ order, onRemove, cartOpen, closeCart }) => {
                 {" "}
                 Общая стоимость:{" "}
                 {order.reduce((acc, item) => {
-                  return acc + item.price * item.quantity;
+                  return acc + item.price * getQuantity(item.id);
                 }, 0)}{" "}
                 рублей.
               </Typography>
